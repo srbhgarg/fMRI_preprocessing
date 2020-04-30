@@ -1,0 +1,14 @@
+source ./input_block.sh ../test_afni F001
+source ./dcm2nii_block.sh ../test_afni F001
+source ./discard_block.sh ../test_afni F001 3
+source ./resample_block.sh ../test_afni F001
+source despike_block.sh ../test_afni/ F001
+source isotropic_block.sh ../test_afni/ F001 3
+source stc_block.sh ../test_afni/ F001 --odd 2
+source motion_correction_block.sh ../test_afni/ F001
+source mciva_block.sh /home/lab-x399-2/test_afni/ F001
+source coreg_block.sh ../test_afni F001 t1_struct.nii
+source compute_mask_block.sh ../test_afni F001
+source nuissance_block.sh ../test_afni F001
+source smooth_block.sh ../test_afni F001 6
+source filter_block.sh ../test_afni F001 0.01 0.1

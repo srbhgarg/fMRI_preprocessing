@@ -1,0 +1,32 @@
+#!/bin/tcsh
+
+set subjid="F001"
+set pdir="/home/lab-x399-2/test_afni/"
+set file="cot1mprsagiso.nii"
+
+ 
+setenv SUBJECTS_DIR ${pdir}"/freesurfer/"
+
+mkdir -p $SUBJECTS_DIR
+
+echo "recon-all -subjid $subjid  -i ${pdir}"/"${subjid}"/"${file} -all -brainstem-structures -hippocampal-subfields-T1"
+recon-all -subjid $subjid  -i ${pdir}"/"${subjid}"/"${file} -all -brainstem-structures -hippocampal-subfields-T1
+
+
+
+#convert files for afni
+cd $SUBJECTS_DIR"/"$subjid"/"surf
+@SUMA_Make_Spec_FS -sid $subjid -NIFTI
+cd -
+
+mri_convert ${SUBJECTS_DIR}"/"${subjid}"/mri/aparc.a2009s+aseg.mgz"  ${SUBJECTS_DIR}"/"${subjid}"/mri/aparc.a2009s+aseg.nii" 
+
+#gnerating masks for nusissance regressions
+mri_convert ${SUBJECTS_DIR}"/"${subjid}"/mri/wm.mgz"  ${SUBJECTS_DIR}"/"${subjid}"/mri/wm.nii" 
+
+#convert to LAS orientation
+#3dresample -orient asl -rmode NN -prefix LAS_resample -input  $pdir/$subj/$file
+
+#isotropic reslicing
+#3dresample -dxyz 1.0 1.0 1.0 -rmode Cu  -prefix ISO -input $pdir/$subj/$file
+

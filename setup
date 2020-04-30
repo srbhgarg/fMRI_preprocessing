@@ -1,0 +1,3 @@
+setenv FREESURFER_HOME /home/lab-x399-2/freesurfer/
+source $FREESURFER_HOME/SetUpFreeSurfer.csh
+
