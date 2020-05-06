@@ -1,14 +1,79 @@
-source ./input_block.sh ../test_afni F001
-source ./dcm2nii_block.sh ../test_afni F001
-source ./discard_block.sh ../test_afni F001 3
-source ./resample_block.sh ../test_afni F001
-source despike_block.sh ../test_afni/ F001
-source isotropic_block.sh ../test_afni/ F001 3
-source stc_block.sh ../test_afni/ F001 --odd 2
-source motion_correction_block.sh ../test_afni/ F001
-source mciva_block.sh /home/lab-x399-2/test_afni/ F001
-source coreg_block.sh ../test_afni F001 t1_struct.nii
-source compute_mask_block.sh ../test_afni F001
-source nuissance_block.sh ../test_afni F001
-source smooth_block.sh ../test_afni F001 6
-source filter_block.sh ../test_afni F001 0.01 0.1
+
+set fdir=/home/lab-x399-2/Documents/Data/FOG_new/Rest/
+set tdir=/home/lab-x399-2/Documents/Data/FOG_new/T1/
+
+
+foreach subj (`ls $tdir`)
+set fmri_file=`ls $fdir/$subj/$subj*.{PAR,nii,nii.gz,par} | xargs -n 1 basename`
+set t1file=`ls $tdir/$subj/$subj*.{PAR,nii,nii.gz,par} | xargs -n 1 basename`
+
+echo "==================================================="
+echo $subj $fmri_file $t1file
+echo "==================================================="
+echo source runFreeSurfer $tdir $subj $t1file 
+
+source ./input_block.sh $fdir $subj $fmri_file
+if ( "$?" == "1" ) then
+	exit 1
+endif
+source ./dcm2nii_block.sh $fdir $subj
+if ( "$?" == "1" ) then
+	exit 1
+endif
+source ./discard_block.sh $fdir $subj 3
+if ( "$?" == "1" ) then
+	exit 1
+endif
+source ./resample_block.sh $fdir $subj
+if ( "$?" == "1" ) then
+	exit 1
+endif
+source despike_block.sh $fdir/ $subj
+if ( "$?" == "1" ) then
+	exit 1
+endif
+source isotropic_block.sh $fdir/ $subj 3
+if ( "$?" == "1" ) then
+	exit 1
+endif
+source stc_block.sh $fdir/ $subj --odd 2
+if ( "$?" == "1" ) then
+	exit 1
+endif
+source motion_correction_block.sh $fdir/ $subj
+if ( "$?" == "1" ) then
+	exit 1
+endif
+source mciva_block.sh $fdir/ $subj
+if ( "$?" == "1" ) then
+	exit 1
+endif
+source coreg_block.sh $fdir $subj $tdir $t1file
+if ( "$?" == "1" ) then
+	exit 1
+endif
+source compute_mask_block.sh $tdir $subj
+if ( "$?" == "1" ) then
+	exit 1
+endif
+source nuissance_block.sh $fdir $subj
+if ( "$?" == "1" ) then
+	exit 1
+endif
+source smooth_block.sh $fdir $subj 6
+if ( "$?" == "1" ) then
+	exit 1
+endif
+source filter_block.sh $fdir $subj 0.01 0.1
+if ( "$?" == "1" ) then
+	exit 1
+endif
+source output_block.sh $fdir $subj
+if ( "$?" == "1" ) then
+	exit 1
+endif
+source extract_time_course.sh $tdir $subj
+if ( "$?" == "1" ) then
+	exit 1
+endif
+end
