@@ -1,8 +1,8 @@
 #!/bin/tcsh
 
-set subjid="F001"
-set pdir="/home/lab-x399-2/test_afni/"
-set file="cot1mprsagiso.nii"
+set pdir=$1 #/home/lab-x399-2/Documents/Data/FOG_new/T1/
+set subjid=$2 #"1029"
+set file=$3 #"1029_T1.nii"
 
  
 setenv SUBJECTS_DIR ${pdir}"/freesurfer/"
