@@ -31,7 +31,7 @@ if ( ! -d "$1/$2" ) then
 endif
 
 if ( ! -f "$output_dir/$OUTFILE" ) then
-    echo "[Error] Input file $1/$2/$OUTFILE not found "
+    echo "[Error] Input file $output_dir/$OUTFILE not found "
     exit 1
 endif
 
@@ -54,7 +54,7 @@ if ( ! -f "$output_dir/$OUTFILE" ) then
 		exit 1
 	endif
 else
-	echo "[Debug] isotropic resclicing is already performed"
+	echo "[Debug]  slice timing correction is already performed"
 endif
 
 echo $OUTFILE

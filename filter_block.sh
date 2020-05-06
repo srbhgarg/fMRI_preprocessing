@@ -38,10 +38,10 @@ if ( ! -f "$output_dir/$OUTFILE" ) then
 endif
 
 set file=$OUTFILE
-set OUTFILE="$base"_filtered+tlrc.BRIK
+set outfilename=`ls $output_dir/*_filtered*.HEAD | xargs -n 1 basename`
 
 : check if this step is already done
-if ( ! -f "$output_dir/$OUTFILE" ) then
+if ( ! -f "$output_dir/$outfilename" ) then
 	
 	echo 3dBandpass  -prefix $output_dir/"$base"_filtered $3 $4  $output_dir/$file
 	3dBandpass  -prefix $output_dir/"$base"_filtered $3 $4  $output_dir/$file
@@ -52,5 +52,6 @@ if ( ! -f "$output_dir/$OUTFILE" ) then
 else
 	echo "[Debug] Initial volumes are already discarded"
 endif
+set OUTFILE=`ls $output_dir/*_filtered*.HEAD | xargs -n 1 basename`
 
 echo $OUTFILE

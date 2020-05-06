@@ -34,14 +34,14 @@ if ( ! -f "$output_dir/$OUTFILE" ) then
 endif
 
 
-set parfile=`echo $OUTFILE|cut -d'.' -f1`.par
+set parfile=`ls $output_dir/*motion*.par | xargs -n 1 basename`
 
 if ( ! -f "$output_dir/${base}_regression_cleaned.nii" ) then
 
 : compute mean time course  and derivatives
 # compute de-meaned motion parameters (for use in regression)
-1d_tool.py -infile $output_dir/$parfile -set_nruns 1                             \
-           -demean -write $output_dir/motion_demean.1D
+echo 1d_tool.py -infile $output_dir/$parfile -set_nruns 1 -demean -write $output_dir/motion_demean.1D
+1d_tool.py -infile $output_dir/$parfile -set_nruns 1 -demean -write $output_dir/motion_demean.1D
 
 # compute motion parameter derivatives (for use in regression)
 1d_tool.py -infile $output_dir/$parfile -set_nruns 1                             \

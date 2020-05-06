@@ -1,7 +1,7 @@
 #!/bin/tcsh
 
 : Takes fMRI NII/AFNI and T1 files as input and extract mean time course
-: Inputs: $1 Directory name
+: Inputs: $1 T1 Directory name
 :         $2 subject name
 :         input file is obtained from OUTFILE environment variable
 : Output: Output afni file name
@@ -23,8 +23,8 @@ if ( ! -d "$1" ) then
     exit 1
 endif
 
-if ( ! -d "$1/$2" ) then
-    echo "[Error] Subject directory $1/$2 not found "
+if ( ! -d "$1/freesurfer/$2" ) then
+    echo "[Error] Subject directory $1/freesurfer/$2 not found "
     exit 1
 endif
 

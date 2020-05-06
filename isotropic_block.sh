@@ -30,16 +30,16 @@ if ( ! -d "$1/$2" ) then
 endif
 
 if ( ! -f "$output_dir/$OUTFILE" ) then
-    echo "[Error] Input file $1/$2/$OUTFILE not found "
+    echo "[Error] Input file $output_dir/$OUTFILE not found "
     exit 1
 endif
 
 set file=$OUTFILE
 
-set OUTFILE="$base"_isotropic+tlrc.BRIK
 
+set outfilename=`ls $output_dir/*isotropic*.HEAD`
 
-if ( ! -f "$output_dir/$OUTFILE" ) then
+if ( ! -f "$outfilename" ) then
 	echo 3dresample -dxyz $3 $3 $3 -rmode Cu  -prefix $output_dir/$base"_isotropic" -input  $output_dir/$file  
 	3dresample -dxyz $3 $3 $3 -rmode Cu  -prefix $output_dir/$base"_isotropic" -input  $output_dir/$file  
 	if ( "$?" == "1" ) then
@@ -50,4 +50,5 @@ else
 	echo "[Debug] isotropic resclicing is already performed"
 endif
 
+set OUTFILE=`ls $output_dir/*isotropic*.HEAD | xargs -n 1 basename`
 echo $OUTFILE

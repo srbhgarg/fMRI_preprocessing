@@ -12,8 +12,8 @@
 
 echo "[Main] Performing motion correction using mcflirt ..."
 
-if ($#argv != 3) then
-    echo "[Error] Insufficient number of input arguments. Expected 3 got $#argv"
+if ($#argv != 2) then
+    echo "[Error] Insufficient number of input arguments. Expected 2 got $#argv"
     exit 1
 endif
 
@@ -33,21 +33,18 @@ if ( ! -f "$output_dir/$OUTFILE" ) then
     exit 1
 endif
 
-if ( ! -f "$1/$2/$3" ) then
-    echo "[Error] Input Structural file $1/$2/$3 not found "
-    exit 1
-endif
-
 set file=$OUTFILE
+set outfilename=`ls $output_dir/*motion_corrected.nii.gz`
 
-if ( ! -f "$output_dir/struct2func.mat" ) then
+if ( ! -f "$outfilename" ) then
 
 touch $output_dir/out.pre_ss_warn.txt
 
+echo 3dToutcount -automask -fraction -polort 5 -legendre $output_dir/$file savedto  $output_dir/outcount_rall.1D
 3dToutcount -automask -fraction -polort 5 -legendre $output_dir/$file >  $output_dir/outcount_rall.1D
 
 :  outliers at TR 0 might suggest pre-steady state TRs
-if ( `1deval -a  outcount_rall.1D"{0}" -expr "step(a-0.4)"` ) then
+if ( `1deval -a  $output_dir/outcount_rall.1D"{0}" -expr "step(a-0.4)"` ) then
         echo "** TR #0 outliers: possible pre-steady state TRs" \
             >> $output_dir/out.pre_ss_warn.txt
 endif
@@ -58,17 +55,16 @@ set reference=`grep -n $minima $output_dir/outcount_rall.1D| cut -d':' -f1| head
 set minindex = `3dTstat -argmin -prefix - $output_dir/outcount_rall.1D\'`
 echo minima=$minima   reference=$reference   minindex=$minindex 
 
+	echo mcflirt -in $output_dir/$file -out $output_dir/motion_corrected -refvol $minindex -plots -stats 
 	mcflirt -in $output_dir/$file -out $output_dir/motion_corrected -refvol $minindex -plots -stats 
 
 	if ( "$?" == "1" ) then
 		echo "[Error] mcflirt failed with error"
 		exit 1
 	endif
-	convert_xfm -omat $output_dir/struct2func.mat -inverse $output_dir/func2struct.mat
-
-
 else
-	echo "[Debug] co-registration is already performed"
+	echo "[Debug] motion correction is already performed"
 endif
 
+set OUTFILE=`ls $output_dir/*motion_corrected.nii.gz | xargs -n 1 basename`
 echo $OUTFILE

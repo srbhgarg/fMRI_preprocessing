@@ -34,7 +34,7 @@ if ( ! -f "$1/$2/$3" ) then
 endif
 
 
-set output_dir=$1/$2"/temp/"
+set output_dir=$1/$2"/PROCESSED_DATA/"
 mkdir -p $output_dir
 
 cp -rf $1/$2/$3 $output_dir/ 

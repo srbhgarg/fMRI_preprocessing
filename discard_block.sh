@@ -32,15 +32,15 @@ if ( ! -d "$1/$2" ) then
 endif
 
 if ( ! -f "$output_dir/$OUTFILE" ) then
-    echo "[Error] Input file $1/$2/$OUTFILE not found "
+    echo "[Error] Input file $output_dir/$OUTFILE not found "
     exit 1
 endif
 
 set file=$OUTFILE
-set OUTFILE="$base"_discarded+tlrc.BRIK
 
+set outfilename=`ls $output_dir/*discarded*.BRIK`
 : check if this step is already done
-if ( ! -f "$output_dir/$OUTFILE" ) then
+if ( ! -f "$outfilename" ) then
 	echo "[Debug] 3dTcat -prefix $output_dir/${base}_discarded   $output_dir/$file'[${3}..]'"
 	3dTcat -prefix $output_dir/"$base"_discarded   $output_dir/$file\[${3}..\$\]
 	if ( "$?" == "1" ) then
@@ -51,4 +51,5 @@ else
 	echo "[Debug] Initial volumes are already discarded"
 endif
 
+set OUTFILE=`ls $output_dir/*discarded*.BRIK | xargs -n 1 basename`
 echo $OUTFILE

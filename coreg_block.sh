@@ -1,9 +1,10 @@
 #!/bin/tcsh
 
 : Takes fMRI NII/AFNI and T1 files as input and perform registration
-: Inputs: $1 Directory name
+: Inputs: $1 functional Directory name
 :         $2 subject name
-:         $3 T1 structural file
+:         $3 T1 structural directory
+:         $4 T1 structural file
 :         input file is obtained from OUTFILE environment variable
 : Output: Output afni file name
 :
@@ -13,8 +14,8 @@
 
 echo "[Main] Performing registraion using epi_reg ..."
 
-if ($#argv != 3) then
-    echo "[Error] Insufficient number of input arguments. Expected 3 got $#argv"
+if ($#argv != 4) then
+    echo "[Error] Insufficient number of input arguments. Expected 4 got $#argv"
     exit 1
 endif
 
@@ -34,22 +35,25 @@ if ( ! -f "$output_dir/$OUTFILE" ) then
     exit 1
 endif
 
-if ( ! -f "$1/$2/$3" ) then
-    echo "[Error] Input Structural file $1/$2/$3 not found "
+if ( ! -f "$3/$2/$4" ) then
+    echo "[Error] Input Structural file $3/$2/$4 not found "
     exit 1
 endif
 
+
 set file=$OUTFILE
-set T1_file=$3
+set T1_file=$4
 
 if ( ! -f "$output_dir/struct2func.mat" ) then
 
-bet $1/$2/$T1_file $output_dir/bet_$T1_file
+bet $3/$2/$T1_file $output_dir/bet_$T1_file
 3dTcat -prefix $output_dir/${base}_reference_$minindex $output_dir/$file'['$minindex']'
-3dAFNItoNIFTI -prefix  $output_dir/${base}_reference_$minindex   $output_dir/${base}_reference_$minindex+tlrc.BRIK
 
-echo epi_reg --epi=$output_dir/${base}_reference_$minindex".nii"  --t1=$1/$2/$T1_file --t1brain=$output_dir/bet_$T1_file --out=$output_dir/func2struct.mat
-epi_reg --epi=$output_dir/${base}_reference_$minindex".nii"  --t1=$1/$2/$T1_file --t1brain=$output_dir/bet_$T1_file --out=$output_dir/func2struct
+set ref_file=`ls $output_dir/*_reference_*.HEAD`
+3dAFNItoNIFTI -prefix  $output_dir/${base}_reference_$minindex  $ref_file
+
+echo epi_reg --epi=$output_dir/${base}_reference_$minindex".nii"  --t1=$3/$2/$T1_file --t1brain=$output_dir/bet_$T1_file --out=$output_dir/func2struct.mat
+epi_reg --epi=$output_dir/${base}_reference_$minindex".nii"  --t1=$3/$2/$T1_file --t1brain=$output_dir/bet_$T1_file --out=$output_dir/func2struct
 	if ( "$?" == "1" ) then
 		echo "[Error] epi_reg failed with error"
 		exit 1

@@ -1,7 +1,7 @@
 #!/bin/tcsh
 
 : Takes fMRI NII/AFNI filename as input and compute WM, CSF masks for regression
-: Inputs: $1 Directory name
+: Inputs: $1 T1 Directory name
 :         $2 subject name
 :         input file is obtained from OUTFILE  variable
 : Output: Output afni file name
@@ -12,7 +12,7 @@
 
 
 
-echo "[Main] Despiking fMRI  data ..."
+echo "[Main] Compute CSF WM mask on fMRI  data ..."
 
 if ($#argv != 2) then
     echo "[Error] Insufficient number of input arguments. Expected 2 got $#argv"
@@ -25,24 +25,27 @@ if ( ! -d "$1" ) then
     exit 1
 endif
 
-if ( ! -d "$1/$2" ) then
-    echo "[Error] Subject directory $1/$2 not found "
+if ( ! -d "$1/freesurfer/$2" ) then
+    echo "[Error] Subject directory $1/freesurfer/$2 not found "
     exit 1
 endif
 
 if ( ! -f "$output_dir/$OUTFILE" ) then
-    echo "[Error] Input file $1/$2/$OUTFILE not found "
+    echo "[Error] Input file $output_dir/$OUTFILE not found "
     exit 1
 endif
 
 set file=$OUTFILE
 
 
-if ( ! -f "$output_dir//ROIPC.FSvent.1D" ) then
+if ( ! -f "$output_dir/ROIPC.FSvent.1D" ) then
 
 
 : Generating CSF, GM and WM masks
 : register the masks to the func space
+
+: /Documents/Data/FOG_new/T1/freesurfer/1029/surf/SUMA/
+
 echo flirt -interp nearestneighbour -in $1/freesurfer/$2/surf/SUMA/fs_ap_wm.nii.gz -ref $output_dir/${base}_reference_$minindex".nii" -applyxfm -init $output_dir/struct2func.mat -out $output_dir/fs_ap_wm_infunc.nii.gz
 flirt -interp nearestneighbour -in $1/freesurfer/$2/surf/SUMA/fs_ap_wm.nii.gz -ref $output_dir/${base}_reference_$minindex".nii" -applyxfm -init $output_dir/struct2func.mat -out $output_dir/fs_ap_wm_infunc.nii.gz
 if ( "$?" == "1" ) then

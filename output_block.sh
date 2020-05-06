@@ -7,7 +7,7 @@
 : Author: Saurabh
 : April 24 2020, PPRC @ UBC
 
-echo "Input filename Step ........"
+echo "Output filename Step ........"
 
 if ($#argv != 2) then
     echo "[Error] Insufficient number of input arguments. Expected 2 got $#argv"
