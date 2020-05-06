@@ -11,7 +11,7 @@
 : April 25 2020, PPRC @ UBC
 
 
-echo "[Main] Despiking fMRI  data ..."
+echo "[Main] Smoothing fMRI  data ..."
 
 if ($#argv != 3) then
     echo "[Error] Insufficient number of input arguments. Expected 3 got $#argv"
@@ -37,17 +37,19 @@ endif
 set file=$OUTFILE
 
 
-set OUTFILE="$base"_smoothed+tlrc.BRIK
+set outfilename=`ls $output_dir/*smoothed*.HEAD`
 
-if ( ! -f "$output_dir/$OUTFILE" ) then
+if ( ! -f "$outfilename" ) then
 
     3dBlurToFWHM -input $output_dir/$file -prefix $output_dir/"$base"_smoothed -automask -FWHM $3 
    if ( "$?" == "1" ) then
 	echo "[Error] 3dBlurToFWHM failed with error"
 	exit 1
    endif
+   mv 3dFWHMx* $output_dir/
 else
 	echo "[Debug]  fMRI data is already smoothed"
 endif
 
+set OUTFILE=`ls $output_dir/*smoothed*.HEAD | xargs -n 1 basename`
 echo $OUTFILE
