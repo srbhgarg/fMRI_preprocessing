@@ -1,0 +1,37 @@
+#!/bin/tcsh
+
+set tdir=/home/lab-x399-2/Documents/Data/Bladder/
+
+
+foreach subj (`ls $tdir`)
+	echo "Processing ... " $subj
+	set t1file=`ls $tdir/$subj/$subj*T1*.{PAR,par} | xargs -n 1 basename`
+
+	echo "==================================================="
+	echo $subj $t1file
+	echo "==================================================="
+        
+	set OUTFILE=$t1file
+	echo "outfile= " $OUTFILE
+	set output_dir=$tdir"/T1/"$subj
+	echo "output_dir= " $output_dir
+	mkdir -p $output_dir
+
+
+	echo source ./dcm2nii_block.sh $tdir $subj
+	source ./dcm2nii_block.sh $tdir $subj
+	if ( "$?" == "1" ) then
+		exit 1
+	endif
+
+end
+
+
+set tdir=/home/lab-x399-2/Documents/Data/Bladder/T1/
+foreach subj (`ls $tdir`)
+	echo "Processing ... " $subj
+	set t1file=`ls $tdir/$subj/$subj*T1*.{nii,nii.gz} | xargs -n 1 basename`
+
+	echo source runFreeSurfer $tdir $subj $t1file 
+	source runFreeSurfer $tdir $subj $t1file &
+end 
