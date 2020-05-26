@@ -1,0 +1,33 @@
+
+
+set TR=0.53
+set fdir=/home/lab-x399-2/Documents/Data/Bladder/
+
+
+foreach subj (`ls $fdir`)
+	echo "Processing ... " $subj
+    foreach ffile (`ls $fdir/$subj/$subj*rFMRI*.{PAR,par} | xargs -n 1 basename`)
+
+	echo "==================================================="
+	echo $subj $ffile
+	echo "==================================================="
+        
+	set OUTFILE=$ffile
+	echo "outfile= " $OUTFILE
+	set output_dir=$fdir"/Rest/"$subj
+	echo "output_dir= " $output_dir
+	mkdir -p $output_dir
+
+
+	echo source ./dicm2nii_block.sh $fdir $subj
+	#source ./dicm2nii_block.sh $fdir $subj
+	if ( "$?" == "1" ) then
+		exit 1
+	endif
+   end
+end
+
+set tdir=/home/lab-x399-2/Documents/Data/Bladder/T1/
+set fdir=/home/lab-x399-2/Documents/Data/Bladder/Rest/
+
+
